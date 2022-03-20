@@ -1,0 +1,8 @@
+module.exports = {
+  mongoURI:
+    "mongodb+srv://<userid>:<password>@cluster0.zadqe.mongodb.net/<database>?retryWrites=true&w=majority",
+};
+
+// module.exports = {
+//     mongoURI: process.env.MONGO_URI,
+//   };
