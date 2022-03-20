@@ -1,12 +1,13 @@
 const AWS = require("aws-sdk");
 // name of your bucket here
 // const NAME_OF_BUCKET = "aws-s3-express-react-demo";
-const NAME_OF_BUCKET = process.env.NAME_OF_BUCKET;
+const NAME_OF_BUCKET = "my-site-images-test";
+// const NAME_OF_BUCKET = process.env.NAME_OF_BUCKET;
 const multer = require("multer");
 
-// if (process.env.NODE_ENV !== "production") {
-//   AWS.config.loadFromPath("./credentials.json");
-// }
+if (process.env.NODE_ENV !== "production") {
+  AWS.config.loadFromPath("./credentials.json");
+}
 // else {
 //  make sure to set environment variables in production for:
 //  AWS_ACCESS_KEY_ID
@@ -24,9 +25,12 @@ const singlePublicFileUpload = async (file) => {
     Bucket: NAME_OF_BUCKET,
     Key,
     Body: buffer,
+    ContentType: "image/jpeg",
     ACL: "public-read",
   };
   const result = await s3.upload(uploadParams).promise();
+
+  // ContentType: "image/jpeg",
 
   // save the name of the file in your bucket as the key in your database to retrieve for later
   return result.Location;
