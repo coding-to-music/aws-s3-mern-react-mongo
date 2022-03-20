@@ -1,11 +1,12 @@
 const AWS = require("aws-sdk");
 // name of your bucket here
-const NAME_OF_BUCKET = "aws-s3-express-react-demo";
-const multer = require('multer');
+// const NAME_OF_BUCKET = "aws-s3-express-react-demo";
+const NAME_OF_BUCKET = process.env.NAME_OF_BUCKET;
+const multer = require("multer");
 
-if (process.env.NODE_ENV !== "production") {
-  AWS.config.loadFromPath("./credentials.json");
-}
+// if (process.env.NODE_ENV !== "production") {
+//   AWS.config.loadFromPath("./credentials.json");
+// }
 // else {
 //  make sure to set environment variables in production for:
 //  AWS_ACCESS_KEY_ID
@@ -23,7 +24,7 @@ const singlePublicFileUpload = async (file) => {
     Bucket: NAME_OF_BUCKET,
     Key,
     Body: buffer,
-    ACL: "public-read"
+    ACL: "public-read",
   };
   const result = await s3.upload(uploadParams).promise();
 
@@ -31,9 +32,9 @@ const singlePublicFileUpload = async (file) => {
   return result.Location;
 };
 
-const multiplePublicFileUpload = async files => {
+const multiplePublicFileUpload = async (files) => {
   return await Promise.all(
-    files.map(file => {
+    files.map((file) => {
       return singlePublicFileUpload(file);
     })
   );
@@ -47,7 +48,7 @@ const singlePrivateFileUpload = async (file) => {
   const uploadParams = {
     Bucket: NAME_OF_BUCKET,
     Key,
-    Body: buffer
+    Body: buffer,
   };
   const result = await s3.upload(uploadParams).promise();
 
@@ -56,9 +57,11 @@ const singlePrivateFileUpload = async (file) => {
 };
 
 const multiplePrivateFileUpload = async (files) => {
-  return await Promise.all(files.map(file => {
-    return singlePrivateFileUpload(file);
-  }));
+  return await Promise.all(
+    files.map((file) => {
+      return singlePrivateFileUpload(file);
+    })
+  );
 };
 
 const retrievePrivateFile = (key) => {
@@ -66,28 +69,30 @@ const retrievePrivateFile = (key) => {
   if (key) {
     fileUrl = s3.getSignedUrl("getObject", {
       Bucket: NAME_OF_BUCKET,
-      Key: key
+      Key: key,
     });
   }
   return fileUrl || key;
 };
 
 const storage = multer.memoryStorage({
-    destination: function(req, file, callback) {
-        callback(null, '');
-    }
+  destination: function (req, file, callback) {
+    callback(null, "");
+  },
 });
 
-const singleMulterUpload = (nameOfKey) => multer({ storage: storage }).single(nameOfKey);
-const multipleMulterUpload = (nameOfKey) => multer({ storage: storage }).array(nameOfKey);
+const singleMulterUpload = (nameOfKey) =>
+  multer({ storage: storage }).single(nameOfKey);
+const multipleMulterUpload = (nameOfKey) =>
+  multer({ storage: storage }).array(nameOfKey);
 
-module.exports = { 
-  s3, 
-  singlePublicFileUpload, 
+module.exports = {
+  s3,
+  singlePublicFileUpload,
   multiplePublicFileUpload,
-  singlePrivateFileUpload, 
+  singlePrivateFileUpload,
   multiplePrivateFileUpload,
   retrievePrivateFile,
   singleMulterUpload,
-  multipleMulterUpload
+  multipleMulterUpload,
 };
