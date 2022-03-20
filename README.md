@@ -1,31 +1,37 @@
 # AWS S3 Demo with MERN
+
 [Live Version](https://aws-s3-mern-demo.herokuapp.com/#/)
 
+https://github.com/ssoonmi/aws-s3-MERN-demo
+
+https://aws-s3-mern-demo.herokuapp.com/#/
+
 ## Set Up
+
 #### Packages to install in your backend
+
 - [multer](https://www.npmjs.com/package/multer)
 - [aws-sdk](https://www.npmjs.com/package/aws-sdk)
 
 #### Create your AWS User and Bucket
+
 Navigate to [https://s3.console.aws.amazon.com/s3/home?region=us-east-1](https://s3.console.aws.amazon.com/s3/home?region=us-east-1) click on “create bucket”, enter a name, choose a region, and leave all other options as default.
 
-Head to [https://console.aws.amazon.com/iam/home?#/users](https://console.aws.amazon.com/iam/home?#/users) to create a new user. Name the user whatever you like. Give the user `Programmatic access`. Proceed to the next step. Now we need to set up the security policy for our new user. This is how they will be allowed to connect. Click 'Attach existing policies directly' and then 'Create Policy'. This will open up a new tab. 
+Head to [https://console.aws.amazon.com/iam/home?#/users](https://console.aws.amazon.com/iam/home?#/users) to create a new user. Name the user whatever you like. Give the user `Programmatic access`. Proceed to the next step. Now we need to set up the security policy for our new user. This is how they will be allowed to connect. Click 'Attach existing policies directly' and then 'Create Policy'. This will open up a new tab.
 
-In the new tab, click the `JSON` tab and paste the following: 
+In the new tab, click the `JSON` tab and paste the following:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Stmt1420751757000",
-            "Effect": "Allow",
-            "Action": [
-                "s3:*"
-            ],
-            "Resource": "arn:aws:s3:::<NAME OF BUCKET>/*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1420751757000",
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": "arn:aws:s3:::<NAME OF BUCKET>/*"
+    }
+  ]
 }
 ```
 
@@ -33,12 +39,14 @@ Make sure to replace `<NAME OF BUCKET>` with the name of your bucket.
 
 Give the policy whatever name you like (e.g. s3-access-to-name-of-project). After you save it, head back over to the other tab/window where you are creating a new user.
 
-Click the refresh button all the way to the right of the `Create User` button then search for the policy that you just created. Check that policy then head over to the next step. Create the user. 
+Click the refresh button all the way to the right of the `Create User` button then search for the policy that you just created. Check that policy then head over to the next step. Create the user.
 
 After you create the user, you will get the `Access Key ID` and the `Secret Access Key`. **Store this somewhere safe on your computer**
 
 ## Set up AWS S3 in your backend
+
 ### [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js)
+
 Make a file called `awsS3.js` at the root of your project. [Link to file](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js)
 Copy the contents of [this file](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js) into the file you just created.
 
@@ -57,19 +65,24 @@ module.exports = { s3 };
 ```
 
 #### `AWS.config.loadFromPath`
-This function is allowing us to configure our aws keys using a json file. 
+
+This function is allowing us to configure our aws keys using a json file.
+
 > You can learn more about how this works here:
 > [https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-json-file.html](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-json-file.html)
 
 #### How to set up your credentials in production
+
 You do not need a credentials.json in production. Instead, all you need to do is set environmental keys for `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
 > You can read more about how AWS uses the environment variables here:
 > [https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-environment.html](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-environment.html)
 
 ### `credentials.json`
+
 Make a file called `credentials.json` **at the root** of your project.
 In there, you will set your aws credentials that you got when you created the AWS User.
+
 ```json
 {
   "accessKeyId": "<Your AWS Access Key ID>",
@@ -77,17 +90,21 @@ In there, you will set your aws credentials that you got when you created the AW
   "region": "us-east-1"
 }
 ```
+
 **MAKE SURE TO GITIGNORE THIS FILE**
 
 ## Private vs Public File Uploading
+
 If you absolutely don't want your file images to be publicly available by just any user, you want your files to be private. If you don't care if users are able to access those files (e.g. on Twitter, posts are public so any photos with those posts can be publicly viewed), then you can set up the files to be publicly read.
 
 Take a look at the following file, [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js), to see how to set up private vs. public AWS S3 upload.
 
 ### Public Files
+
 How to set up uploading and reading public files on the backend.
 
 #### Public File Write Configuration
+
 Take a look at the function `singlePublicFileUpload` in the following file, [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js). It accepts a single file which to upload to AWS S3.
 
 ```javascript
@@ -100,7 +117,7 @@ const singlePublicFileUpload = async (file) => {
     Bucket: NAME_OF_BUCKET,
     Key,
     Body: buffer,
-    ACL: "public-read"
+    ACL: "public-read",
   };
   const result = await s3.upload(uploadParams).promise();
 
@@ -113,9 +130,9 @@ We will generate a key on S3 that we can use to identify the file that we will b
 
 `const Key = new Date().getTime().toString() + path.extname(originalname);`
 
-The upload parameters to S3 include a key-value pair, `ACL: "public-read"`. This tells the bucket that this file can be publicly read by anyone who has the link to the file. 
+The upload parameters to S3 include a key-value pair, `ACL: "public-read"`. This tells the bucket that this file can be publicly read by anyone who has the link to the file.
 
-S3 sends back data on the saved file which is saved to the variable `result`. 
+S3 sends back data on the saved file which is saved to the variable `result`.
 
 `const result = await s3.upload(uploadParams).promise();`
 
@@ -136,29 +153,29 @@ router.post("/", singleMulterUpload("image"), async (req, res) => {
 });
 ```
 
-
 ```javascript
 // in awsS3.js
 const storage = multer.memoryStorage({
-    destination: function(req, file, callback) {
-        callback(null, '');
-    }
+  destination: function (req, file, callback) {
+    callback(null, "");
+  },
 });
 
-const singleMulterUpload = (nameOfKey) => multer({ storage: storage }).single(nameOfKey);
+const singleMulterUpload = (nameOfKey) =>
+  multer({ storage: storage }).single(nameOfKey);
 ```
 
 `singleMulterUpload` is a function that generates the middleware necessary to convert the data from our form into readable fields and files. This function accepts the key to which we expect the files to be saved under in our data (`"image"` in this case).
 
 We connect the `singleMulterUpload` middleware to our `POST /api/users` route, and then we can access the file in our request, `req` under the key of `file`.
 
-Because the `singlePublicFileUpload` is an async function, it returns a promise. That promise returns the file URL that we want to save to our database. In this case, I want to save that url under the key of `image` on the new User. 
+Because the `singlePublicFileUpload` is an async function, it returns a promise. That promise returns the file URL that we want to save to our database. In this case, I want to save that url under the key of `image` on the new User.
 
 #### Public File Read Configuration
 
 **On AWS S3 Console**
 
-Access your bucket public permissions: 
+Access your bucket public permissions:
 ![Access Your Bucket Permissions](assets/bucket_tabs.png)
 
 Select the following permissions:
@@ -171,9 +188,11 @@ Hit Save
 All you need to read the files on your frontend is the link to the file that you saved to the database. Nothing special is needed other than the saved S3 URL.
 
 ### Private Files Backend
+
 How to set up uploading and reading private files in the backend.
 
 #### Private File Write Configuration
+
 Take a look at the function `singlePrivateFileUpload` in the following file, [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js). It accepts a single file which to upload to AWS S3.
 
 ```javascript
@@ -185,7 +204,7 @@ const singlePrivateFileUpload = async (file) => {
   const uploadParams = {
     Bucket: NAME_OF_BUCKET,
     Key,
-    Body: buffer
+    Body: buffer,
   };
   const result = await s3.upload(uploadParams).promise();
 
@@ -198,7 +217,7 @@ We will generate a key on S3 that we can use to identify the file that we will b
 
 `const Key = new Date().getTime().toString() + path.extname(originalname);`
 
-S3 sends back data on the saved file which is saved to the variable `result`. 
+S3 sends back data on the saved file which is saved to the variable `result`.
 
 `const result = await s3.upload(uploadParams).promise();`
 
@@ -219,28 +238,29 @@ router.post("/", singleMulterUpload("image"), async (req, res) => {
 });
 ```
 
-
 ```javascript
 // in awsS3.js
 const storage = multer.memoryStorage({
-    destination: function(req, file, callback) {
-        callback(null, '');
-    }
+  destination: function (req, file, callback) {
+    callback(null, "");
+  },
 });
 
-const singleMulterUpload = (nameOfKey) => multer({ storage: storage }).single(nameOfKey);
+const singleMulterUpload = (nameOfKey) =>
+  multer({ storage: storage }).single(nameOfKey);
 ```
 
 `singleMulterUpload` is a function that generates the middleware necessary to convert the data from our form into readable fields and files. This function accepts the key to which we expect the files to be saved under in our data (`"image"` in this case).
 
 We connect the `singleMulterUpload` middleware to our `POST /api/users` route, and then we can access the file in our request, `req` under the key of `file`.
 
-Because the `singlePrivateFileUpload` is an async function, it returns a promise. That promise returns the key that we want to save to our database. In this case, I want to save it under the key of `image` on the new User. 
+Because the `singlePrivateFileUpload` is an async function, it returns a promise. That promise returns the key that we want to save to our database. In this case, I want to save it under the key of `image` on the new User.
 
 #### Private File Read Configuration
+
 Sending up the files that have private access requires us to get a signed URL from AWS S3 that we can then send up to our frontend for our authenticated users to access.
 
-Take a look at the function `retrievePrivateFile` in the following file, [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js). It accepts a key, which we saved to our database, and returns the signed file URL from AWS S3. 
+Take a look at the function `retrievePrivateFile` in the following file, [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js). It accepts a key, which we saved to our database, and returns the signed file URL from AWS S3.
 
 ```javascript
 const retrievePrivateFile = (key) => {
@@ -248,14 +268,14 @@ const retrievePrivateFile = (key) => {
   if (key) {
     fileUrl = s3.getSignedUrl("getObject", {
       Bucket: NAME_OF_BUCKET,
-      Key: key
+      Key: key,
     });
   }
   return fileUrl || key;
 };
 ```
 
-Every time we want to fetch this file, we need a signed URL to access it. 
+Every time we want to fetch this file, we need a signed URL to access it.
 
 For example, in this case, when we want to fetch the images saved to each user, we need to map through all the users to make sure we get a signed URL for each user's image.
 
@@ -264,7 +284,7 @@ For example, in this case, when we want to fetch the images saved to each user, 
 router.get("/", async (req, res) => {
   let users = await User.find({});
   // if single image is private file:
-  users = users.map(user => {
+  users = users.map((user) => {
     user.image = retrievePrivateFile(user.image);
     return user;
   });
@@ -273,15 +293,17 @@ router.get("/", async (req, res) => {
 ```
 
 ### Multiple Files Backend
+
 Take a look at the `multiplePublicFileUpload`, `multiplePrivateFileUpload`, and `multipleMulterUpload` functions in the following file, [`awsS3.js`](https://github.com/ssoonmi/aws-s3-MERN-demo/blob/master/awsS3.js). These functions are used in the same way as the single file upload functions above.
 
 ## File Upload on the Frontend
-We will be using axios for this example. To send files, we must label our request as a `"multipart/form-data"`. 
+
+We will be using axios for this example. To send files, we must label our request as a `"multipart/form-data"`.
 
 ```javascript
 const config = {
   headers: {
-    "content-type": "multipart/form-data    
+    "content-type": "multipart/form-data
   }
 };
 ```
@@ -294,7 +316,7 @@ import axios from "axios";
 
 export const RECEIVE_USER = "RECEIVE_USER";
 
-export const createUser = (user) => dispatch => {
+export const createUser = (user) => (dispatch) => {
   const { images, image, name, email } = user;
   const formData = new FormData();
   formData.append("name", name);
@@ -312,15 +334,14 @@ export const createUser = (user) => dispatch => {
 
   const config = {
     headers: {
-      "content-type": "multipart/form-data"
-    }
+      "content-type": "multipart/form-data",
+    },
   };
 
-  return axios.post("/api/users", formData, config)
-    .then(res => {
-      const user = res.data;
-      return dispatch({ type: RECEIVE_USER, user });
-    });
+  return axios.post("/api/users", formData, config).then((res) => {
+    const user = res.data;
+    return dispatch({ type: RECEIVE_USER, user });
+  });
 };
 ```
 
@@ -329,17 +350,17 @@ The form itself, should look just like a regular React form. Take a look at this
 ```javascript
 // MainPage.js file
 import React from "react";
-import { connect } from 'react-redux';
-import { fetchUsers, createUser } from '../../actions/users_actions';
+import { connect } from "react-redux";
+import { fetchUsers, createUser } from "../../actions/users_actions";
 
 class MainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      email: '',
+      name: "",
+      email: "",
       image: null,
-      images: []
+      images: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateFile = this.updateFile.bind(this);
@@ -351,38 +372,34 @@ class MainPage extends React.Component {
   }
 
   update(field) {
-    return e => this.setState({ [field]: e.target.value });
+    return (e) => this.setState({ [field]: e.target.value });
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.createUser(this.state)
-      .then(() => {
-        this.setState({
-          name: "",
-          email: "",
-          image: null,
-          images: []
-        });
+    this.props.createUser(this.state).then(() => {
+      this.setState({
+        name: "",
+        email: "",
+        image: null,
+        images: [],
       });
+    });
   }
 
-  updateFiles(e){
-    const { target: 
-      {
-        validity,
-        files
-      }
+  updateFiles(e) {
+    const {
+      target: { validity, files },
     } = e;
     return validity.valid && this.setState({ images: files });
   }
 
-  updateFile(e){
-    const { target: 
-      {
+  updateFile(e) {
+    const {
+      target: {
         validity,
-        files: [file]
-      }
+        files: [file],
+      },
     } = e;
     return validity.valid && this.setState({ image: file });
   }
@@ -393,24 +410,24 @@ class MainPage extends React.Component {
         <h1>AWS S3 Express-React Demo</h1>
         <form onSubmit={this.handleSubmit}>
           <label>
-            <input 
-              type="text" 
-              placeholder="Name" 
-              value={this.state.name} 
-              onChange={this.update("name")} />
+            <input
+              type="text"
+              placeholder="Name"
+              value={this.state.name}
+              onChange={this.update("name")}
+            />
           </label>
           <label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               placeholder="Email"
-              value={this.state.email} 
-              onChange={this.update("email")} />
+              value={this.state.email}
+              onChange={this.update("email")}
+            />
           </label>
           <label>
             Single Upload
-            <input 
-              type="file"
-              onChange={this.updateFile} />
+            <input type="file" onChange={this.updateFile} />
           </label>
           {/* <label>
             Multiple Upload
@@ -422,11 +439,11 @@ class MainPage extends React.Component {
           <input type="submit" value="Create User" />
         </form>
         <ul>
-          {this.props.users.map(user => (
+          {this.props.users.map((user) => (
             <li key={user._id}>
               <div>{user.name}</div>
               <div>{user.email}</div>
-              <img src={user.image} alt=""/>
+              <img src={user.image} alt="" />
             </li>
           ))}
         </ul>
@@ -435,21 +452,20 @@ class MainPage extends React.Component {
   }
 }
 
-const msp = state => {
+const msp = (state) => {
   return {
-    users: Object.values(state.users)
+    users: Object.values(state.users),
   };
 };
 
-const mdp = dispatch => {
+const mdp = (dispatch) => {
   return {
     createUser: (user) => dispatch(createUser(user)),
-    fetchUsers: () => dispatch(fetchUsers())
+    fetchUsers: () => dispatch(fetchUsers()),
   };
 };
 
 export default connect(msp, mdp)(MainPage);
 ```
 
-
-If you have any questions or get stuck on any part of the process, please feel free to message me. 
+If you have any questions or get stuck on any part of the process, please feel free to message me.
