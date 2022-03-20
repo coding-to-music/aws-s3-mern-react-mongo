@@ -1,6 +1,12 @@
 # AWS S3 Demo with MERN
 
-[Live Version](https://aws-s3-mern-demo.herokuapp.com/#/)
+https://github.com/coding-to-music/aws-s3-mern-react-mongo
+
+[My Live Version](https://aws-s3-mern-react-mongo.herokuapp.com/#/)
+
+By ssoonmi https://github.com/ssoonmi
+
+[Original Live Version](https://aws-s3-mern-demo.herokuapp.com/#/)
 
 https://github.com/ssoonmi/aws-s3-MERN-demo
 
