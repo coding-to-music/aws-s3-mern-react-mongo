@@ -10,8 +10,10 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./.env" });
 const db = process.env.MONGO_URI;
+const anotherPort = process.env.PORT;
 
 console.log("app.js: db ", db);
+console.log("app.js: anotherPort ", anotherPort);
 
 mongoose
   .connect(db, {
@@ -44,6 +46,7 @@ if (process.env.NODE_ENV === "production") {
 
 const port = process.env.PORT || 5000;
 
+console.log(`app.js: port `, port);
 console.log(`app.js: process.env.PORT `, process.env.PORT);
 
 app.listen(port, () =>
