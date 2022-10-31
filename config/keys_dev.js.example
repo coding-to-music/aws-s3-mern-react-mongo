@@ -1,6 +1,6 @@
 module.exports = {
   mongoURI:
-    "mongodb+srv://<userid>:<password>@cluster0.zadqe.mongodb.net/<database>?retryWrites=true&w=majority",
+    "mongodb+srv://<userid>:<password>@clust777er0.zad77qe3.mongodb.net/<database>?retryWrites=true&w=majority",
 };
 
 // module.exports = {

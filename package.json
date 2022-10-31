@@ -10,7 +10,8 @@
     "frontend-build": "npm run build --prefix frontend",
     "frontend-install": "npm install --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run frontend\"",
-    "heroku-postbuild": "npm run frontend-install && npm run frontend-build"
+    "heroku-postbuild": "npm run frontend-install && npm run frontend-build",
+    "deploy": "git add . && git commit -m Build && git push"
   },
   "author": "",
   "license": "ISC",
