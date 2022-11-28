@@ -4,3 +4,4 @@ node_modules/
 credentials.json
 config/keys_dev.js
 .env
+.vercel
