@@ -1,12 +1,10 @@
 # AWS S3 Demo with MERN
 
-
+Works! Creates user in mongo database, and uploads image to AWS S3 bucket. 
 
 https://github.com/coding-to-music/aws-s3-mern-react-mongo
 
 https://aws-s3-mern-react-mongo.vercel.app/
-
-[Heroku Live Version](https://aws-s3-mern-react-mongo.herokuapp.com/#/)
 
 By ssoonmi https://github.com/ssoonmi
 
