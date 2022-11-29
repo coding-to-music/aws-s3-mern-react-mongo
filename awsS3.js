@@ -11,13 +11,16 @@ if (process.env.NODE_ENV !== "production") {
   AWS.config.loadFromPath("./credentials.json");
 }
 else {
-  //  make sure to set environment variables in production for:
-  //  and aws will automatically use those environment variables
-  NAME_OF_BUCKET = process.env.NAME_OF_BUCKET;
-  AWS_ACCESS_KEY_ID = process.env.APP_AWS_ACCESS_KEY_ID;
-  AWS_SECRET_ACCESS_KEY = process.env.APP_AWS_SECRET_ACCESS_KEY;
-  MONGO_URI = process.env.MONGO_URI; 
-}
+  AWS.config = new AWS.Config({
+    accessKeyId: process.env.APP_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.APP_AWS_SECRET_ACCESS_KEY,
+    region: process.env.APP_AWS_REGION,
+    signatureVersion: 'v4',
+  })
+  }
+
+//   NAME_OF_BUCKET = process.env.NAME_OF_BUCKET;
+
 const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
 const singlePublicFileUpload = async (file) => {
